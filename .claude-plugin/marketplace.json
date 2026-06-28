@@ -1,0 +1,14 @@
+{
+  "name": "teodorio-security",
+  "owner": {
+    "name": "teodorio95"
+  },
+  "plugins": [
+    {
+      "name": "claude-code-security",
+      "source": "./",
+      "description": "Security guardrails for Claude Code: destructive-command blocking, network egress allowlist, secret-scan-on-write, a restricted security-reviewer subagent, and /security-review + /threat-model commands.",
+      "category": "security"
+    }
+  ]
+}

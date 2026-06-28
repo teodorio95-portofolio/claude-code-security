@@ -1,0 +1,13 @@
+title = "claude-code-security"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "This repo intentionally contains secret-shaped strings: the detection patterns in the secret-scan hook and the fake secrets used as test fixtures. They are not real credentials."
+paths = [
+  '''hooks/secret_scan\.py''',
+  '''tests/.*''',
+  '''docs/.*''',
+  '''README\.md''',
+]

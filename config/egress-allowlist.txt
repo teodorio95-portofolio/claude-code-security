@@ -1,0 +1,25 @@
+# Network egress allowlist for the egress_allowlist hook.
+# One host or domain per line; `#` starts a comment. A request host matches an
+# entry if it equals it or is a subdomain of it (api.github.com matches github.com).
+# Edit this to fit your project — default-deny, so add what you trust.
+
+# Local development
+localhost
+127.0.0.1
+
+# Source forges
+github.com
+gitlab.com
+bitbucket.org
+
+# Package registries
+pypi.org
+files.pythonhosted.org
+registry.npmjs.org
+crates.io
+static.crates.io
+
+# Common docs / APIs
+docs.claude.com
+code.claude.com
+api.anthropic.com

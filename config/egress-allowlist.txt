@@ -23,3 +23,18 @@ static.crates.io
 docs.claude.com
 code.claude.com
 api.anthropic.com
+
+# Fashion storefronts (discount digest feasibility probe)
+fashiondays.ro
+answear.ro
+aboutyou.ro
+aboutyou.de
+zalando.ro
+trendyol.com
+mango.com
+massimodutti.com
+modivo.ro
+epantofi.ro
+
+# TypeSafe (Jev) docs
+docs.typesafe.ai

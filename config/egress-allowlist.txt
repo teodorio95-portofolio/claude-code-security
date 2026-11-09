@@ -38,3 +38,6 @@ epantofi.ro
 
 # TypeSafe (Jev) docs
 docs.typesafe.ai
+
+# CMTEB district-heating status feed (termoalert-watch)
+cmteb.ro

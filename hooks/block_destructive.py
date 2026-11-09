@@ -11,17 +11,15 @@ yourself outside the agent).
 from __future__ import annotations
 
 import re
+import shlex
 
 from _hooklib import allow, deny, read_event
 
-# `rm` is special-cased: dangerous only when it is BOTH recursive/forced AND
-# aimed at a root / home / wildcard / current-dir target.
-_RM_RECURSIVE_FORCE = re.compile(r"\brm\b[^|;&\n]*\s-[a-zA-Z]*[rf]")
+# `rm` is special-cased: recursion and a dangerous target must belong to
+# the same command. Force alone is safe; home subdirectories are not roots.
 _RM_ROOT_TARGET = re.compile(
-    r"""(?x)
-    \s(?:/|~|\$HOME|\*|\.\.?)(?:\s|/?$)                    # bare /  ~  $HOME  *  .  ..
-    | \s(?:~/|/(?:etc|usr|var|bin|sbin|lib|lib64|boot|sys|dev|proc|root|opt|home))\b
-    """
+    r"(?:/|~/?|\$HOME/?|\*|\.{1,2}/?|(?:~|\$HOME)?/\*|"
+    r"/(?:etc|usr|var|bin|sbin|lib|lib64|boot|sys|dev|proc|root|opt|home)/?)"
 )
 
 # (compiled pattern, human reason) for the remaining one-shot dangers.
@@ -43,7 +41,33 @@ _RULES: list[tuple[re.Pattern[str], str]] = [
 
 
 def _dangerous_rm(command: str) -> bool:
-    return bool(_RM_RECURSIVE_FORCE.search(command) and _RM_ROOT_TARGET.search(command))
+    lexer = shlex.shlex(command, posix=True, punctuation_chars="|;&()\n")
+    lexer.whitespace = " \t\r"
+    lexer.whitespace_split = True
+    try:
+        tokens = list(lexer)
+    except ValueError:
+        return False  # An incomplete shell command cannot execute as written.
+    recursive = False
+    targets = []
+    in_rm = False
+    options = True
+    for token in tokens + [";"]:
+        if token and all(ch in "|;&()\n" for ch in token):
+            if recursive and any(_RM_ROOT_TARGET.fullmatch(t) for t in targets):
+                return True
+            recursive, in_rm, options = False, False, True
+            targets = []
+        elif not in_rm:
+            if token in ("rm", "/bin/rm", "/usr/bin/rm"):
+                in_rm = True
+        elif options and token == "--":
+            options = False
+        elif options and token.startswith("-"):
+            recursive |= token == "--recursive" or bool(re.fullmatch(r"-[a-zA-Z]*[rR][a-zA-Z]*", token))
+        else:
+            targets.append(token)
+    return False
 
 
 def main() -> None:
@@ -52,7 +76,7 @@ def main() -> None:
         allow()
     if _dangerous_rm(command):
         deny(
-            "Blocked destructive command: recursive force-delete of a root/home/wildcard path. "
+            "Blocked destructive command: recursive delete of a root/home/wildcard path. "
             "Run it yourself if you really mean to."
         )
     for pattern, reason in _RULES:

@@ -23,7 +23,7 @@ the "install once, secure everywhere" answer instead of copying files per repo.
 
 | Component | Type | What it does |
 |-----------|------|--------------|
-| **block_destructive** | `PreToolUse(Bash)` hook | Blocks `rm -rf /`/`~`/system dirs, fork bombs, `dd of=/dev/…`, `mkfs`, `curl … \| sh`, force-push to main |
+| **block_destructive** | `PreToolUse(Bash)` hook | Blocks recursive `rm` of bare root/home/wildcard/current-dir targets or top-level system directories (allows `rm -f` and home subdirectories), fork bombs, `dd of=/dev/…`, `mkfs`, `curl … \| sh`, force-push to main |
 | **egress_allowlist** | `PreToolUse(Bash)` hook | Default-deny network: blocks `curl`/`wget` to hosts not in `config/egress-allowlist.txt` |
 | **secret_scan** | `PreToolUse(Write\|Edit)` hook | Blocks writing AWS/GitHub/GitLab/Slack/Google/OpenAI keys, private keys, or hard-coded credentials to disk |
 | **security-reviewer** | subagent | Read-only (Read/Grep/Glob) security review — policy-as-code: it *can't* edit or run anything |

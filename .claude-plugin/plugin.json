@@ -1,7 +1,7 @@
 {
   "name": "claude-code-security",
   "description": "Security guardrails for Claude Code: PreToolUse hooks that block destructive commands, enforce a network egress allowlist, and stop secrets being written to disk — plus a restricted security-reviewer subagent and /security-review and /threat-model commands.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "teodorio95"
   },
